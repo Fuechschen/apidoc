@@ -63,7 +63,9 @@ function init () {
 
   apiProject.template = Object.assign(defaultTemplateOptions, apiProject.template ?? {});
 
-  if (apiProject.template.forceLanguage) { setLanguage(apiProject.template.forceLanguage); }
+  if (apiProject.template.forceLanguage) {
+    setLanguage(apiProject.template.forceLanguage);
+  }
 
   //
   // Data transform
@@ -100,7 +102,9 @@ function init () {
     titles.sort();
 
     // custom order
-    if (apiProject.order) { titles = sortByOrder(titles, apiProject.order, '#~#'); }
+    if (apiProject.order) {
+      titles = sortByOrder(titles, apiProject.order, '#~#');
+    }
 
     // add single elements to the new list
     titles.forEach(name => {
@@ -134,7 +138,9 @@ function init () {
   apiGroups.sort();
 
   // custom order
-  if (apiProject.order) { apiGroups = sortGroupsByOrder(apiGroupTitles, apiProject.order); }
+  if (apiProject.order) {
+    apiGroups = sortGroupsByOrder(apiGroupTitles, apiProject.order);
+  }
 
   // sort versions DESC
   apiVersions = Object.keys(apiVersions);
@@ -183,12 +189,12 @@ function init () {
   });
 
   /**
-     * Add navigation items by analyzing the HTML content and searching for h1 and h2 tags
-     * @param nav Object the navigation array
-     * @param content string the compiled HTML content
-     * @param index where to insert items
-     * @return boolean true if any good-looking (i.e. with a group identifier) <h1> tag was found
-     */
+   * Add navigation items by analyzing the HTML content and searching for h1 and h2 tags
+   * @param nav Object the navigation array
+   * @param content string the compiled HTML content
+   * @param index where to insert items
+   * @return boolean true if any good-looking (i.e. with a group identifier) <h1> tag was found
+   */
   function addNav (nav, content, index) {
     let foundLevel1 = false;
     if (!content) {
@@ -277,7 +283,9 @@ function init () {
   $('#project').append(templateProject(apiProject));
 
   // render apiDoc, header/footer documentation
-  if (apiProject.header) { $('#header').append(templateHeader(apiProject.header)); }
+  if (apiProject.header) {
+    $('#header').append(templateHeader(apiProject.header));
+  }
 
   if (apiProject.footer) {
     $('#footer').append(templateFooter(apiProject.footer));
@@ -334,17 +342,25 @@ function init () {
 
         // add prefix URL for endpoint unless it's already absolute
         if (apiProject.url) {
-          if (fields.article.url.substr(0, 4).toLowerCase() !== 'http') {
-            fields.article.url = apiProject.url + fields.article.url;
+          if (fields.article.url.substr(0, 4).toLowerCase() !== 'http' || fields.article.url.substr(0, 2).toLowerCase() !== 'ws') {
+            if (fields.article.type.toLowerCase() === 'websocket' || fields.article.type.toLowerCase() === 'upgrade') {
+              fields.article.url = apiProject.url.replace(/http/, 'ws') + fields.article.url;
+            } else {
+              fields.article.url = apiProject.url + fields.article.url;
+            }
           }
         }
 
         addArticleSettings(fields, entry);
 
-        if (entry.groupTitle) { title = entry.groupTitle; }
+        if (entry.groupTitle) {
+          title = entry.groupTitle;
+        }
 
         // TODO: make groupDescription comparable with older versions (not important for the moment)
-        if (entry.groupDescription) { description = entry.groupDescription; }
+        if (entry.groupDescription) {
+          description = entry.groupDescription;
+        }
 
         articles.push({
           article: templateArticle(fields),
@@ -386,33 +402,39 @@ function init () {
     const id = this.getAttribute('href');
     if (apiProject.template.aloneDisplay) {
       const active = document.querySelector('.sidenav > li.active');
-      if (active) { active.classList.remove('active'); }
+      if (active) {
+        active.classList.remove('active');
+      }
       this.parentNode.classList.add('active');
     } else {
       const el = document.querySelector(id);
-      if (el) { $('html,body').animate({ scrollTop: el.offsetTop }, 400); }
+      if (el) {
+        $('html,body').animate({ scrollTop: el.offsetTop }, 400);
+      }
     }
     window.location.hash = id;
   });
 
   /**
-     * Check if Parameter (sub) List has a type Field.
-     * Example: @apiSuccess          varname1 No type.
-     *          @apiSuccess {String} varname2 With type.
-     *
-     * @param {Object} fields
-     */
+   * Check if Parameter (sub) List has a type Field.
+   * Example: @apiSuccess          varname1 No type.
+   *          @apiSuccess {String} varname2 With type.
+   *
+   * @param {Object} fields
+   */
   function _hasTypeInFields (fields) {
     let result = false;
     $.each(fields, name => {
-      result = result || some(fields[name], item => { return item.type; });
+      result = result || some(fields[name], item => {
+        return item.type;
+      });
     });
     return result;
   }
 
   /**
-     * On Template changes, recall plugins.
-     */
+   * On Template changes, recall plugins.
+   */
   function initDynamic () {
     // Bootstrap popover
     $('button[data-toggle="popover"]').popover().click(function (e) {
@@ -427,7 +449,9 @@ function init () {
         const name = $(this).data('name');
         const length = $('#sidenav li[data-group=\'' + group + '\'][data-name=\'' + name + '\']').length;
         const index = $('#sidenav li[data-group=\'' + group + '\'][data-name=\'' + name + '\']').index($(this));
-        if (length === 1 || index === length - 1) { $(this).addClass('is-new'); }
+        if (length === 1 || index === length - 1) {
+          $(this).addClass('is-new');
+        }
       });
     }
 
@@ -548,6 +572,7 @@ function init () {
       }
     });
   }
+
   setMainVersion();
 
   $('#versions li.version a').on('click', function (e) {
@@ -580,7 +605,9 @@ function init () {
   // and would make it jump to the wrong position or not jump at all.
   if (window.location.hash) {
     const id = decodeURI(window.location.hash);
-    if ($(id).length > 0) { $('html,body').animate({ scrollTop: parseInt($(id).offset().top) }, 0); }
+    if ($(id).length > 0) {
+      $('html,body').animate({ scrollTop: parseInt($(id).offset().top) }, 0);
+    }
   }
 
   /**
@@ -616,8 +643,8 @@ function init () {
   });
 
   /**
-     * Change version of an article to compare it to an other version.
-     */
+   * Change version of an article to compare it to an other version.
+   */
   function changeVersionCompareTo (e) {
     e.preventDefault();
 
@@ -633,9 +660,13 @@ function init () {
 
     const compareVersion = $root.data('compare-version');
 
-    if (compareVersion === selectedVersion) { return; }
+    if (compareVersion === selectedVersion) {
+      return;
+    }
 
-    if (!compareVersion && version === selectedVersion) { return; }
+    if (!compareVersion && version === selectedVersion) {
+      return;
+    }
 
     if ((compareVersion && (articleVersions[group][name][0] === selectedVersion)) || version === selectedVersion) { // eslint-disable-line no-extra-parens
       // the version of the entry is set to the highest version (reset)
@@ -644,8 +675,12 @@ function init () {
       let sourceEntry = {};
       let compareEntry = {};
       $.each(apiByGroupAndName[group][name], function (index, entry) {
-        if (entry.version === version) { sourceEntry = entry; }
-        if (entry.version === selectedVersion) { compareEntry = entry; }
+        if (entry.version === version) {
+          sourceEntry = entry;
+        }
+        if (entry.version === selectedVersion) {
+          compareEntry = entry;
+        }
       });
 
       const fields = {
@@ -663,22 +698,38 @@ function init () {
       fields.compare.id = fields.compare.id.replace(/\./g, '_');
 
       let entry = sourceEntry;
-      if (entry.parameter && entry.parameter.fields) { fields._hasTypeInParameterFields = _hasTypeInFields(entry.parameter.fields); }
+      if (entry.parameter && entry.parameter.fields) {
+        fields._hasTypeInParameterFields = _hasTypeInFields(entry.parameter.fields);
+      }
 
-      if (entry.error && entry.error.fields) { fields._hasTypeInErrorFields = _hasTypeInFields(entry.error.fields); }
+      if (entry.error && entry.error.fields) {
+        fields._hasTypeInErrorFields = _hasTypeInFields(entry.error.fields);
+      }
 
-      if (entry.success && entry.success.fields) { fields._hasTypeInSuccessFields = _hasTypeInFields(entry.success.fields); }
+      if (entry.success && entry.success.fields) {
+        fields._hasTypeInSuccessFields = _hasTypeInFields(entry.success.fields);
+      }
 
-      if (entry.info && entry.info.fields) { fields._hasTypeInInfoFields = _hasTypeInFields(entry.info.fields); }
+      if (entry.info && entry.info.fields) {
+        fields._hasTypeInInfoFields = _hasTypeInFields(entry.info.fields);
+      }
 
       entry = compareEntry;
-      if (fields._hasTypeInParameterFields !== true && entry.parameter && entry.parameter.fields) { fields._hasTypeInParameterFields = _hasTypeInFields(entry.parameter.fields); }
+      if (fields._hasTypeInParameterFields !== true && entry.parameter && entry.parameter.fields) {
+        fields._hasTypeInParameterFields = _hasTypeInFields(entry.parameter.fields);
+      }
 
-      if (fields._hasTypeInErrorFields !== true && entry.error && entry.error.fields) { fields._hasTypeInErrorFields = _hasTypeInFields(entry.error.fields); }
+      if (fields._hasTypeInErrorFields !== true && entry.error && entry.error.fields) {
+        fields._hasTypeInErrorFields = _hasTypeInFields(entry.error.fields);
+      }
 
-      if (fields._hasTypeInSuccessFields !== true && entry.success && entry.success.fields) { fields._hasTypeInSuccessFields = _hasTypeInFields(entry.success.fields); }
+      if (fields._hasTypeInSuccessFields !== true && entry.success && entry.success.fields) {
+        fields._hasTypeInSuccessFields = _hasTypeInFields(entry.success.fields);
+      }
 
-      if (fields._hasTypeInInfoFields !== true && entry.info && entry.info.fields) { fields._hasTypeInInfoFields = _hasTypeInFields(entry.info.fields); }
+      if (fields._hasTypeInInfoFields !== true && entry.info && entry.info.fields) {
+        fields._hasTypeInInfoFields = _hasTypeInFields(entry.info.fields);
+      }
 
       const content = templateCompareArticle(fields);
       $root.after(content);
@@ -698,8 +749,8 @@ function init () {
   }
 
   /**
-     * Compare all currently selected Versions with their predecessor.
-     */
+   * Compare all currently selected Versions with their predecessor.
+   */
   function changeAllVersionCompareTo (e) {
     e.preventDefault();
     $('article:visible .versions').each(function () {
@@ -708,16 +759,20 @@ function init () {
       let $foundElement = null;
       $(this).find('li.version a').each(function () {
         const selectVersion = $(this).html();
-        if (selectVersion < currentVersion && !$foundElement) { $foundElement = $(this); }
+        if (selectVersion < currentVersion && !$foundElement) {
+          $foundElement = $(this);
+        }
       });
 
-      if ($foundElement) { $foundElement.trigger('click'); }
+      if ($foundElement) {
+        $foundElement.trigger('click');
+      }
     });
   }
 
   /**
-     * Add article settings.
-     */
+   * Add article settings.
+   */
   function addArticleSettings (fields, entry) {
     // add unique id
     // TODO: replace all group-name-version in template with id.
@@ -749,12 +804,14 @@ function init () {
   }
 
   /**
-     * Render Article.
-     */
+   * Render Article.
+   */
   function renderArticle (group, name, version) {
     let entry = {};
     $.each(apiByGroupAndName[group][name], function (index, currentEntry) {
-      if (currentEntry.version === version) { entry = currentEntry; }
+      if (currentEntry.version === version) {
+        entry = currentEntry;
+      }
     });
     const fields = {
       article: entry,
@@ -767,8 +824,8 @@ function init () {
   }
 
   /**
-     * Render original Article and remove the current visible Article.
-     */
+   * Render original Article and remove the current visible Article.
+   */
   function resetArticle (group, name, version) {
     const $root = $('article[data-group=\'' + group + '\'][data-name=\'' + name + '\']:visible');
     const content = renderArticle(group, name, version);
@@ -785,12 +842,12 @@ function init () {
   }
 
   /**
-     * Return ordered entries by custom order and append not defined entries to the end.
-     * @param  {String[]} elements
-     * @param  {String[]} order
-     * @param  {String}   splitBy
-     * @return {String[]} Custom ordered list.
-     */
+   * Return ordered entries by custom order and append not defined entries to the end.
+   * @param  {String[]} elements
+   * @param  {String[]} order
+   * @param  {String}   splitBy
+   * @return {String[]} Custom ordered list.
+   */
   function sortByOrder (elements, order, splitBy) {
     const results = [];
     order.forEach(function (name) {
@@ -798,37 +855,47 @@ function init () {
         elements.forEach(function (element) {
           const parts = element.split(splitBy);
           const key = parts[0]; // reference keep for sorting
-          if (key === name || parts[1] === name) { results.push(element); }
+          if (key === name || parts[1] === name) {
+            results.push(element);
+          }
         });
       } else {
         elements.forEach(function (key) {
-          if (key === name) { results.push(name); }
+          if (key === name) {
+            results.push(name);
+          }
         });
       }
     });
     // Append all other entries that are not defined in order
     elements.forEach(function (element) {
-      if (results.indexOf(element) === -1) { results.push(element); }
+      if (results.indexOf(element) === -1) {
+        results.push(element);
+      }
     });
     return results;
   }
 
   /**
-     * Return ordered groups by custom order and append not defined groups to the end.
-     * @param  {Object[]} elements (key: group name, value: group title)
-     * @param  {String[]} order
-     * @return {String[]} Custom ordered list.
-     */
+   * Return ordered groups by custom order and append not defined groups to the end.
+   * @param  {Object[]} elements (key: group name, value: group title)
+   * @param  {String[]} order
+   * @return {String[]} Custom ordered list.
+   */
   function sortGroupsByOrder (groups, order) {
     const results = [];
     order.forEach(sortKey => {
       Object.keys(groups).forEach(name => {
-        if (groups[name].replace(/_/g, ' ') === sortKey) { results.push(name); }
+        if (groups[name].replace(/_/g, ' ') === sortKey) {
+          results.push(name);
+        }
       });
     });
     // Append all other entries that are not defined in order
     Object.keys(groups).forEach(name => {
-      if (results.indexOf(name) === -1) { results.push(name); }
+      if (results.indexOf(name) === -1) {
+        results.push(name);
+      }
     });
     return results;
   }
